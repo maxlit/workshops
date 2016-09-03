@@ -270,4 +270,5 @@ F <- function(dist){
 *** Morandat, Floréal, et al. "Evaluating the design of the R language." ECOOP 2012–Object-oriented programming. Springer Berlin Heidelberg, 2012. 104-131.
 ** Repository
 *** You can find the latest version of this presentation here:
-*** github.com/maxlit/R-overview
+*** [[github.com/maxlit/workshops/tree/master/R/r-advanced-overview]]
+
