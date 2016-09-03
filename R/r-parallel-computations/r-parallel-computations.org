@@ -150,6 +150,8 @@ parLapply(cl, 1:nc, function(x) C(temps[x]))
 ** Example - wrong implementation II
 *** standard object *c* was overwritten and wasn't put in the scope of cluster
 *** Even worse it didn't throw an error since the cluster used the default object
+*** Recommended to review the topic on scope in
+[[https://github.com/maxlit/workshops/blob/master/R/r-advanced-overview/r-workshop-general-overview.pdf]]
 ** Pay attention
 *** Be careful with the scope of the cluster
 *** distribute carefully among work loaders
@@ -212,3 +214,4 @@ measure.time <- function(command)
 ** End
 *** Thank you for your attention
 *** You can find the presentation and the code that was used here at 
+[[github.com/maxlit/workshops/tree/master/R/r-parallel-computations]]
