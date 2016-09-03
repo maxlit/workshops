@@ -1,0 +1,465 @@
+% Created 2016-09-03 sob 14:54
+\documentclass[bigger]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\usepackage[dvipsnames]{color} 
+\mode<beamer>{\usetheme{Hannover}}
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{R programming language: parallel computations}
+\author{Maxim Litvak}
+\date{2016-06-10}
+\hypersetup{
+  pdfkeywords={},
+  pdfsubject={},
+  pdfcreator={Emacs Org-mode version 7.9.3f}}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}
+\frametitle{Outline}
+\setcounter{tocdepth}{3}
+\tableofcontents
+\end{frame}
+\section{Introduction}
+\label{sec-1}
+\begin{frame}
+\frametitle{Introduction}
+\label{sec-1-1}
+\begin{itemize}
+
+\item A task to produce result Y out of input X may have steps that could be performed in parallel
+\label{sec-1-1-1}%
+
+\item Example: you need to drink a 1L of beer
+\label{sec-1-1-2}%
+\begin{itemize}
+
+\item Ask a friend to help
+\label{sec-1-1-2-1}%
+
+\item The taks is, thus, parallelized among two throats
+\label{sec-1-1-2-2}%
+\end{itemize} % ends low level
+\end{itemize} % ends low level
+\end{frame}
+\begin{frame}
+\frametitle{Who does the job}
+\label{sec-1-2}
+\begin{itemize}
+
+\item you can split the tasks in parallel steps, but who does the job?
+\label{sec-1-2-1}%
+
+\item Nowadays, each PC usually has 2-8 CPU cores.
+\label{sec-1-2-2}%
+\begin{itemize}
+
+\item Each core can process a task!
+\label{sec-1-2-2-1}%
+\end{itemize} % ends low level
+
+\item You can split the tasks across different computers
+\label{sec-1-2-3}%
+\begin{itemize}
+
+\item You can rent them at Microsoft, Amazon etc
+\label{sec-1-2-3-1}%
+\end{itemize} % ends low level
+\end{itemize} % ends low level
+\end{frame}
+\begin{frame}
+\frametitle{How it works - MapReduce framework}
+\label{sec-1-3}
+\begin{itemize}
+
+\item Map step - assign to each work a task to perform
+\label{sec-1-3-1}%
+
+\item Reduce step - collect results from different workers and produce the overall result
+\label{sec-1-3-2}%
+\end{itemize} % ends low level
+\end{frame}
+\section{Loss distribution computation}
+\label{sec-2}
+\begin{frame}
+\frametitle{Basics}
+\label{sec-2-1}
+\begin{itemize}
+
+\item Random numbers used for simulations are ``pseudo-random'', i.e. a sequence of number that looks random
+\label{sec-2-1-1}%
+
+\item The starting point is called a ``seed''. Same seed - same sequence
+\label{sec-2-1-2}%
+
+\item Any simulation system must be reproducible
+\label{sec-2-1-3}%
+\end{itemize} % ends low level
+\end{frame}
+\begin{frame}
+\frametitle{Simulation}
+\label{sec-2-2}
+\begin{itemize}
+
+\item assume we need to calculate 10 million of random numbers
+\label{sec-2-2-1}%
+
+\item if we can split it among 4 CPU cores than each of them needs to generate only 2.5 millions
+\label{sec-2-2-2}%
+
+\item we can assign to each core a different seed, generate the numbers and unite the numbers into one
+\label{sec-2-2-3}%
+\end{itemize} % ends low level
+\end{frame}
+\section{Parallel computation in R}
+\label{sec-3}
+\begin{frame}[fragile]
+\frametitle{Implementation - I}
+\label{sec-3-1}
+\begin{itemize}
+
+\item Loss distribution - non-parallel\\
+\label{sec-3-1-1}%
+\begin{verbatim}
+loss.dist <- function(seed, N)
+{
+  set.seed(seed)
+  return(runif(N))
+}
+
+N <- 4
+seed <- 1
+print(loss.dist(seed, N))
+\end{verbatim}
+
+\begin{verbatim}
+ [1] 0.2655087 0.3721239 0.5728534 0.9082078
+\end{verbatim}
+
+\end{itemize} % ends low level
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Implementation - II}
+\label{sec-3-2}
+\begin{itemize}
+
+\item Explore your ressources\\
+\label{sec-3-2-1}%
+\begin{verbatim}
+library(parallel)
+print(detectCores())
+\end{verbatim}
+
+\begin{verbatim}
+ [1] 4
+\end{verbatim}
+
+
+\item Loss distribution - parallel\\
+\label{sec-3-2-2}%
+\begin{verbatim}
+N <- 4
+seed <- 1
+print(loss.dist(seed, N))
+\end{verbatim}
+
+
+\end{itemize} % ends low level
+\end{frame}
+\begin{frame}
+\frametitle{Using library parallel}
+\label{sec-3-3}
+\begin{itemize}
+
+\item A lot of implementation details are hidden in R (e.g. compared to C\#)
+\label{sec-3-3-1}%
+
+\item General schema
+\label{sec-3-3-2}%
+\begin{itemize}
+
+\item Create a cluster (\textbf{makeCluster})
+\label{sec-3-3-2-1}%
+
+\item Put in the scope of cluster objects (functions, variables etc) which are needed there (\textbf{clusterExport})
+\label{sec-3-3-2-2}%
+
+\item Send a task (function together with input) to the cluster (\textbf{parLapply}) - similar to apply functions
+\label{sec-3-3-2-3}%
+\end{itemize} % ends low level
+\end{itemize} % ends low level
+\end{frame}
+\begin{frame}
+\frametitle{Mean calculation}
+\label{sec-3-4}
+\begin{itemize}
+
+\item Take a trivial task as an example - calculate sum of the sample
+\label{sec-3-4-1}%
+
+\item divide N numbers sample on M workers
+\label{sec-3-4-2}%
+
+\item calculate the sums for each workers (in parallel)
+\label{sec-3-4-3}%
+
+\item collect the results and calculate their sum
+\label{sec-3-4-4}%
+\end{itemize} % ends low level
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Sum parallel calculation - hands-on}
+\label{sec-3-5}
+
+
+\begin{verbatim}
+nc <- 2 # number of cores
+cl <- makeCluster(no_cores)
+sq <- 1:8
+L <- length(sq)
+clusterExport(cl, list("sq", "nc", "L"))
+# check first that the split is correct
+parLapply(cl, 1:nc
+  , function(x) sq[(1+(x-1)*L/nc):(x*L/nc)]
+        )
+# [[1]] 
+# [1] 1 2 3 4
+# [[2]]
+# [1] 5 6 7 8
+\end{verbatim}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Sum parallel calculation - hands-on II}
+\label{sec-3-6}
+
+
+\begin{verbatim}
+res <- parLapply(cl, 1:nc
+, function(x) sum(sq[(1+(x-1)*L/nc):(x*L/nc)])
+        )
+print(res)
+# [[1]]
+# [1] 10
+# [[2]]
+# [1] 26
+print(sum(unlist(res))) # collect results
+# [1] 36
+\end{verbatim}
+\end{frame}
+\begin{frame}
+\frametitle{Example - wrong implementation}
+\label{sec-3-7}
+\begin{itemize}
+
+\item Farenheit to Celcius
+\label{sec-3-7-1}%
+\end{itemize} % ends low level
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Task implement Farenheit to Celcius transform in parallel}
+\label{sec-3-8}
+\begin{itemize}
+
+\item Take this as input (correct \textbf{parLapply} call is to be implemented)\\
+\label{sec-3-8-1}%
+\begin{verbatim}
+library(parallel)
+c <- function(t) t*5/9-32
+nc <- 4
+temps <- seq(10, 40, 10)
+cl <- makeCluster(nc)
+clusterExport(cl, list("temps"))
+\end{verbatim}
+\end{itemize} % ends low level
+\end{frame}
+\begin{frame}
+\frametitle{Example - wrong implementation}
+\label{sec-3-9}
+\begin{itemize}
+
+\item Example attempt\\
+\label{sec-3-9-1}%
+\emph{parLapply(cl, 1:nc, function(x) c(temps[x]))}
+
+\item However, temperatures are still in Farenheit, what is wrong here?
+\label{sec-3-9-2}%
+
+\item Try to correct it
+\label{sec-3-9-3}%
+\end{itemize} % ends low level
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Example - correction}
+\label{sec-3-10}
+
+
+\begin{verbatim}
+library(parallel)
+C <- function(t) t*5/9-32
+nc <- 4
+temps <- seq(10, 40, 10)
+cl <- makeCluster(nc)
+clusterExport(cl, list("temps", "C"))
+parLapply(cl, 1:nc, function(x) C(temps[x]))
+\end{verbatim}
+
+
+\begin{verbatim}
+[[1]]
+[1] -26.44444
+
+[[2]]
+[1] -20.88889
+
+[[3]]
+[1] -15.33333
+
+[[4]]
+[1] -9.777778
+\end{verbatim}
+\end{frame}
+\begin{frame}
+\frametitle{Example - wrong implementation II}
+\label{sec-3-11}
+\begin{itemize}
+
+\item standard object \textbf{c} was overwritten and wasn't put in the scope of cluster
+\label{sec-3-11-1}%
+
+\item Even worse it didn't throw an error since the cluster used the default object
+\label{sec-3-11-2}%
+\end{itemize} % ends low level
+\end{frame}
+\begin{frame}
+\frametitle{Pay attention}
+\label{sec-3-12}
+\begin{itemize}
+
+\item Be careful with the scope of the cluster
+\label{sec-3-12-1}%
+
+\item distribute carefully among work loaders
+\label{sec-3-12-2}%
+\end{itemize} % ends low level
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Parallel loss distribution calculation}
+\label{sec-3-13}
+\begin{itemize}
+
+\item consider a simple loss generation\\
+\label{sec-3-13-1}%
+\begin{verbatim}
+loss.dist <- function(seed, N)
+{
+  set.seed(seed)
+  return(runif(N))
+}
+print(loss.dist(1,4))
+# [1] 0.2655087 0.3721239 0.5728534 0.9082078
+\end{verbatim}
+
+\begin{verbatim}
+ [1] 0.2655087 0.3721239 0.5728534 0.9082078
+\end{verbatim}
+
+
+\item How to parallelize it?
+\label{sec-3-13-2}%
+\end{itemize} % ends low level
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Parallel loss calculation}
+\label{sec-3-14}
+\begin{itemize}
+
+\item Possible solution\\
+\label{sec-3-14-1}%
+\begin{verbatim}
+parallel.loss.dist <- function(seed, N)
+{
+  no_cores <- 2
+  cl <- makeCluster(no_cores)
+  clusterExport(cl, list("loss.dist"))
+  temp.res <- parLapply(
+        cl
+        , seed:(seed + 1)
+        , function(x) loss.dist(x, N = 3)
+        )
+  stopCluster(cl)
+  return(unlist(temp.res))
+}
+print(parallel.loss.dist(1,4))
+# [1] 0.2655087 0.3721239 0.1848823 0.7023740
+\end{verbatim}
+
+
+\end{itemize} % ends low level
+\end{frame}
+\begin{frame}
+\frametitle{Questions}
+\label{sec-3-15}
+\begin{itemize}
+
+\item Why the first 2 numbers coincide with non-parallel version and the rest not?
+\label{sec-3-15-1}%
+
+\item Where is the ``Map'' step and where is the ``Reduce'' step hidden in the code?
+\label{sec-3-15-2}%
+\end{itemize} % ends low level
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Time measurement}
+\label{sec-3-16}
+\begin{itemize}
+
+\item Let's measure time with the following function (not optimal)\\
+\label{sec-3-16-1}%
+\begin{verbatim}
+measure.time <- function(command)
+{
+  start.time <- Sys.time()
+  eval(parse(text = command))
+  end.time <- Sys.time()
+  d <- difftime(end.time, start.time
+        , units = "secs"))
+  return(d)
+}
+# Example:
+# cmd <- "sum(parallel.loss.dist(1, 1e+08))"
+# measure.time(cmd)
+\end{verbatim}
+
+
+\end{itemize} % ends low level
+\end{frame}
+\begin{frame}
+\frametitle{Time measurement II}
+\label{sec-3-17}
+\begin{itemize}
+
+\item play with N to see when it pays off to use parallel or non-parallel version
+\label{sec-3-17-1}%
+
+\item adjust additionally the number of cores - does it get faster?
+\label{sec-3-17-2}%
+\end{itemize} % ends low level
+\end{frame}
+
+\end{document}

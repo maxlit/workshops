@@ -1,0 +1,6 @@
+*~
+*.rkward_autosave
+*.kate-swp
+dist/
+MANIFEST
+
