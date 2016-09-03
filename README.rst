@@ -21,4 +21,6 @@ Parallel computations in R
 
 This is a presentation on the parallel computations in R with the examples from the quantitative risk management.
 
+The file with the presentation is https://github.com/maxlit/workshops/blob/master/R/r-parallel-computations/r-parallel-computations.pdf
+
 **Remark**. The source file of the presentation is *org* file which is converted to *tex* file which is used to produce the *pdf* file.
