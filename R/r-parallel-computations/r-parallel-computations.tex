@@ -1,4 +1,4 @@
-% Created 2016-09-03 sob 15:25
+% Created 2016-10-11 wto 19:56
 \documentclass[bigger]{beamer}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -206,7 +206,7 @@ print(loss.dist(seed, N))
 \end{itemize} % ends low level
 \end{frame}
 \begin{frame}
-\frametitle{Mean calculation}
+\frametitle{Sum calculation}
 \label{sec-3-4}
 \begin{itemize}
 
@@ -404,7 +404,7 @@ parallel.loss.dist <- function(seed, N)
   temp.res <- parLapply(
         cl
         , seed:(seed + 1)
-        , function(x) loss.dist(x, N = 3)
+        , function(x) loss.dist(x, N)
         )
   stopCluster(cl)
   return(unlist(temp.res))

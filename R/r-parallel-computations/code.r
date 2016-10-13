@@ -16,7 +16,7 @@ loss.dist <- function(seed, N)
 ## parallel sum calculation
 ## first check if the split is correct
 nc <- 2 # number of cores
-cl <- makeCluster(no_cores)
+cl <- makeCluster(nc)
 sq <- 1:8
 L <- length(sq)
 clusterExport(cl, list("sq", "nc", "L"))
@@ -66,7 +66,7 @@ parallel.loss.dist <- function(seed, N)
   temp.res <- parLapply(
 	cl
 	, seed:(seed + 1)
-	, function(x) loss.dist(x, N = 3)
+	, function(x) loss.dist(x, N)
 	)
   stopCluster(cl)
   return(unlist(temp.res))

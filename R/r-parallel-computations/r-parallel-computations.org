@@ -81,7 +81,7 @@ print(loss.dist(seed, N))
 **** Create a cluster (*makeCluster*)
 **** Put in the scope of cluster objects (functions, variables etc) which are needed there (*clusterExport*)
 **** Send a task (function together with input) to the cluster (*parLapply*) - similar to apply functions
-** Mean calculation
+** Sum calculation
 *** Take a trivial task as an example - calculate sum of the sample
 *** divide N numbers sample on M workers
 *** calculate the sums for each workers (in parallel)
@@ -180,7 +180,7 @@ parallel.loss.dist <- function(seed, N)
   temp.res <- parLapply(
 	cl
 	, seed:(seed + 1)
-	, function(x) loss.dist(x, N = 3)
+	, function(x) loss.dist(x, N)
 	)
   stopCluster(cl)
   return(unlist(temp.res))
