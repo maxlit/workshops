@@ -25,7 +25,7 @@ The file with the presentation is https://github.com/maxlit/workshops/blob/maste
 
 **Remark**. The source file of the presentation is an *org* file which is converted to a *tex* file which is used to produce the *pdf* file.
 
-Basic numerics for applied mathematical finance
+Basic numerics for applied mathematical finance in R
 ---------------------
 
 **What is all about?**
