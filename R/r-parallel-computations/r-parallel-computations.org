@@ -15,11 +15,8 @@
 #+startup: beamer
 #+LaTeX_CLASS: beamer
 #+LaTeX_CLASS_OPTIONS: [bigger]
-#+LaTeX_CLASS: color
-#+LATEX_HEADER: \usepackage[dvipsnames]{color} 
 #+BEAMER_FRAME_LEVEL: 2
 #+COLUMNS: %40ITEM %10BEAMER_env(Env) %9BEAMER_envargs(Env Args) %4BEAMER_col(Col) %10BEAMER_extra(Extra)
-#+latex_header: \mode<beamer>{\usetheme{Hannover}}
 * Introduction
 ** Introduction
 *** A task to produce result Y out of input X may have steps that could be performed in parallel
