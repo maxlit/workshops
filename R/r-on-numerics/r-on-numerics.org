@@ -7,6 +7,12 @@
 #+LATEX_CLASS_OPTIONS: [presentation]
 #+BEAMER_THEME: Madrid
 #+COLUMNS: %45ITEM %10BEAMER_ENV(Env) %10BEAMER_ACT(Act) %4BEAMER_COL(Col) %8BEAMER_OPT(Opt)
+* Outline
+** Outline
+*** Numerical derivatives
+*** Matrix decomposition
+*** Pseudorandom number generators
+*** Generation of correlated random numbers
 * Basic numerics
 ** Numerical derivative - I
 *** 2 point symmetric derivative
@@ -92,8 +98,8 @@ print(cor(t(mx%*%V)))
 #+end_src
 ** Computation of quantile functions - I
 *** Given
-F() - cdf, probability y
-Find: quantile x, s.t. y = F(x)
+- Given: F() - cdf, probability /y/
+- Find: quantile /x/, s.t. y = F(x)
 *** No closed form solution examples
 - Normal distribution (not even cdf is given in elementary functions!)
 - Gamma distribution
@@ -106,7 +112,7 @@ Normal cdf is implemented in practice as a piecewise Taylor polynom, i.e. with c
 Many algorithms require an interval to be defined, however, the quantile function are often defined on unconstrained intervals.
 *** Example
 - Find a quantile for Gamma distribution
-- Problem: the right end of domain is unconstrained, the root finding algorithm doesn't converge in the tail
+- Problem: the right end of domain is unconstrained, additionally, the root finding algorithm might not converge in the tail
 - Solution: use Chebyshev's inequality to constrain the domain
 ** Computation of quantile functions - III
 *** Application
@@ -128,3 +134,28 @@ pg <- function(x) pgamma(x, 0.02, 1) - 0.95
 uniroot(pg, c(0,0.22))$root
 # check: qgamma(0.95, 0.02, 1)
 #+end_src
+* Application case
+** Case - Constrained distribution
+- Given: normal distribution is used to simulate the collateral value
+- Data: the mean and standard deviation are used from historical observations
+- Proposal: set the negative outcomes to 0
+** Case - Constrained distribution
+*** Problem
+- the mean and standard deviation would shift after cutting
+- i.e. we need to figure out new parameters, s.t. they would give the historical mean and deviation after truncation
+*** Solution
+- calculate new mean and standard deviations
+- luckily, the mean and deviation have a close-form solution
+- $\hat{\mu} = \mu + \eta$
+- $\hat{\sigma}^2 = \sigma^2 - \mu\eta + \eta^2$
+- where $\eta = \sigma \frac{\phi(-\frac{\mu}{\sigma})}{1 - \Phi(-\frac{\mu}{\sigma})}$
+- However, no straight-forward way to invert (and we have a system of two equations - one for mean and one for deviation)
+** Case - Constrained distribution
+*** Numerical inversion of a sysdtem of equations
+- One of possible options is to minimize the sum of error squares
+- $(\hat{\mu}(\mu,\sigma) - \mu_0)^2 + (\hat{\sigma}(\mu,\sigma) - \sigma_0)^2 \rightarrow \min_{\mu,\sigma}$
+- require a multi-dimensional optimization (e.g. gradient descent)
+** Case - Constrained distribution
+*** Some conclusions: a simple (and meaningful) requirement led to:
+- Mathematical calculations (still feasible)
+- Multivariate optimization (with some numerical tinkering)

@@ -1,4 +1,4 @@
-% Created 2017-03-06 pon 23:28
+% Created 2017-05-04 Thu 15:21
 \documentclass[presentation]{beamer}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -23,7 +23,7 @@
 \hypersetup{
   pdfkeywords={},
   pdfsubject={},
-  pdfcreator={Emacs 24.5.1 (Org mode 8.2.10)}}
+  pdfcreator={Emacs 25.1.1 (Org mode 8.2.10)}}
 \begin{document}
 
 \maketitle
@@ -31,9 +31,21 @@
 \tableofcontents
 \end{frame}
 
-\section{Basic numerics}
+\section{Outline}
 \label{sec-1}
-\begin{frame}[label=sec-1-1]{Numerical derivative - I}
+\begin{frame}[label=sec-1-1]{Outline}
+\begin{block}{Numerical derivatives}
+\end{block}
+\begin{block}{Matrix decomposition}
+\end{block}
+\begin{block}{Pseudorandom number generators}
+\end{block}
+\begin{block}{Generation of correlated random numbers}
+\end{block}
+\end{frame}
+\section{Basic numerics}
+\label{sec-2}
+\begin{frame}[label=sec-2-1]{Numerical derivative - I}
 \begin{block}{2 point symmetric derivative}
 $f'_{num}(x) = \frac{f(x + h) - f(x - h)}{2h}$
 \end{block}
@@ -44,7 +56,7 @@ More derivatives exist (e.g. modulus function), but some of them you may not wan
 Set h depending on application cases. 
 \end{block}
 \end{frame}
-\begin{frame}[fragile,label=sec-1-2]{Numerical derivative - II}
+\begin{frame}[fragile,label=sec-2-2]{Numerical derivative - II}
  \begin{block}{Code example}
 \begin{verbatim}
 num.deriv <- function(f, x, h = 1e-05)
@@ -63,13 +75,13 @@ print(num.deriv(sqrt, 4, .01))
 \end{block}
 \end{frame}
 
-\begin{frame}[label=sec-1-3]{Numerical derivative - III}
+\begin{frame}[label=sec-2-3]{Numerical derivative - III}
 \begin{block}{5 point derivative}
 If 2-point derivative behaves badly, try more precision
 $f'_{num} = \frac{-f(x+2h) + 8f(x+h) - 8f(x-h) + f(x-2h)}{12h}$
 \end{block}
 \end{frame}
-\begin{frame}[label=sec-1-4]{Semidefinite matrix decomposition and eigenvalues}
+\begin{frame}[label=sec-2-4]{Semidefinite matrix decomposition and eigenvalues}
 \begin{block}{Example}
 Assume that the default rates in different industries are correlated. The corresponding correlation matrix is positive semidefinite.
 \end{block}
@@ -85,8 +97,8 @@ $\Sigma = (Q\Lambda^{\frac{1}{2}})(Q\Lambda^{\frac{1}{2}})^T$ where $\Lambda$ is
 \end{block}
 \end{frame}
 \section{Numerics in Stochastics}
-\label{sec-2}
-\begin{frame}[label=sec-2-1]{Pseudo-Random Numbers Generators (PRNG) - I}
+\label{sec-3}
+\begin{frame}[label=sec-3-1]{Pseudo-Random Numbers Generators (PRNG) - I}
 \begin{block}{Importance of reproducibility of results}
 \begin{block}{Sounds like a paradox: random numbers must be reproducible}
 Helps to spot the effects of other factors, e.g. you need to calculate impact of the new pricing algorithm and eliminate effect of randomness.
@@ -102,7 +114,7 @@ Helps to spot the effects of other factors, e.g. you need to calculate impact of
 \end{itemize}
 \end{block}
 \end{frame}
-\begin{frame}[fragile,label=sec-2-2]{Pseudo-Random Numbers Generators (PRNG) - II}
+\begin{frame}[fragile,label=sec-3-2]{Pseudo-Random Numbers Generators (PRNG) - II}
  \begin{block}{Code example}
 \begin{verbatim}
 loss.dist <- function(seed, N)
@@ -124,7 +136,7 @@ print(loss.dist(seed=10, N=4)) # different seed - different sequency
 \end{block}
 \end{frame}
 
-\begin{frame}[fragile,label=sec-2-3]{Correlated numbers generation}
+\begin{frame}[fragile,label=sec-3-3]{Correlated numbers generation}
  \begin{block}{Practical scenario:}
 There's a correlation matrix given. However, an expert sets some of the negative correlations to 0 (reality check).
 We need to know if the adjusted matrix is still positive semidefinite.
@@ -140,13 +152,13 @@ print(min(eigen(R)$value))
 
 \begin{verbatim}
           [,1]      [,2]
-[1,] 1.0000000 0.4882435
-[2,] 0.4882435 1.0000000
+[1,] 1.0000000 0.5076308
+[2,] 0.5076308 1.0000000
 \end{verbatim}
 \end{block}
 \end{frame}
 
-\begin{frame}[fragile,label=sec-2-4]{Correlated numbers generation - II}
+\begin{frame}[fragile,label=sec-3-4]{Correlated numbers generation - II}
  \begin{block}{Refresher: fact from the probability theory}
 Let $\xi \in \Phi_{0_n, I_n}$ and $\Sigma = AA^T$
 Then $A\xi \in \Phi_{0_n, \Sigma}$
@@ -161,10 +173,12 @@ print(cor(t(mx%*%V)))
 \end{verbatim}
 \end{block}
 \end{frame}
-\begin{frame}[label=sec-2-5]{Computation of quantile functions - I}
+\begin{frame}[label=sec-3-5]{Computation of quantile functions - I}
 \begin{block}{Given}
-F() - cdf, probability y
-Find: quantile x, s.t. y = F(x)
+\begin{itemize}
+\item Given: F() - cdf, probability \emph{y}
+\item Find: quantile \emph{x}, s.t. y = F(x)
+\end{itemize}
 \end{block}
 \begin{block}{No closed form solution examples}
 \begin{itemize}
@@ -179,19 +193,19 @@ If the quantile function is given, it's better to used its Taylor expansion
 Normal cdf is implemented in practice as a piecewise Taylor polynom, i.e. with coefficients varying on different intervals.
 \end{block}
 \end{frame}
-\begin{frame}[label=sec-2-6]{Computation of quantile functions - II}
+\begin{frame}[label=sec-3-6]{Computation of quantile functions - II}
 \begin{block}{Problem}
 Many algorithms require an interval to be defined, however, the quantile function are often defined on unconstrained intervals.
 \end{block}
 \begin{block}{Example}
 \begin{itemize}
 \item Find a quantile for Gamma distribution
-\item Problem: the right end of domain is unconstrained, the root finding algorithm doesn't converge in the tail
+\item Problem: the right end of domain is unconstrained, additionally, the root finding algorithm might not converge in the tail
 \item Solution: use Chebyshev's inequality to constrain the domain
 \end{itemize}
 \end{block}
 \end{frame}
-\begin{frame}[label=sec-2-7]{Computation of quantile functions - III}
+\begin{frame}[label=sec-3-7]{Computation of quantile functions - III}
 \begin{block}{Application}
 \begin{block}{Inequality}
 $P(|X - \mu| \geq 10\sigma) = 0.01$
@@ -208,7 +222,7 @@ $P(|X - \mu| \geq 10\sigma) = 0.01$
 $P(|X - \mu| \geq 10\sigma) = 0.01$
 \end{block}
 \end{frame}
-\begin{frame}[fragile,label=sec-2-8]{Computation of quantile functions - IV}
+\begin{frame}[fragile,label=sec-3-8]{Computation of quantile functions - IV}
  \begin{block}{Problem}
 Find quantile of Gamma distribution using uniroot procedure
 \end{block}
@@ -224,5 +238,50 @@ uniroot(pg, c(0,0.22))$root
 \end{verbatim}
 \end{block}
 \end{frame}
-% Emacs 24.5.1 (Org mode 8.2.10)
+
+\section{Application case}
+\label{sec-4}
+\begin{frame}[label=sec-4-1]{Case - Constrained distribution}
+\begin{itemize}
+\item Given: normal distribution is used to simulate the collateral value
+\item Data: the mean and standard deviation are used from historical observations
+\item Proposal: set the negative outcomes to 0
+\end{itemize}
+\end{frame}
+\begin{frame}[label=sec-4-2]{Case - Constrained distribution}
+\begin{block}{Problem}
+\begin{itemize}
+\item the mean and standard deviation would shift after cutting
+\item i.e. we need to figure out new parameters, s.t. they would give the historical mean and deviation after truncation
+\end{itemize}
+\end{block}
+\begin{block}{Solution}
+\begin{itemize}
+\item calculate new mean and standard deviations
+\item luckily, the mean and deviation have a close-form solution
+\item $\hat{\mu} = \mu + \eta$
+\item $\hat{\sigma}^2 = \sigma^2 - \mu\eta + \eta^2$
+\item where $\eta = \sigma \frac{\phi(-\frac{\mu}{\sigma})}{1 - \Phi(-\frac{\mu}{\sigma})}$
+\item However, no straight-forward way to invert (and we have a system of two equations - one for mean and one for deviation)
+\end{itemize}
+\end{block}
+\end{frame}
+\begin{frame}[label=sec-4-3]{Case - Constrained distribution}
+\begin{block}{Numerical inversion of a sysdtem of equations}
+\begin{itemize}
+\item One of possible options is to minimize the sum of error squares
+\item $(\hat{\mu}(\mu,\sigma) - \mu_0)^2 + (\hat{\sigma}(\mu,\sigma) - \sigma_0)^2 \rightarrow \min_{\mu,\sigma}$
+\item require a multi-dimensional optimization (e.g. gradient descent)
+\end{itemize}
+\end{block}
+\end{frame}
+\begin{frame}[label=sec-4-4]{Case - Constrained distribution}
+\begin{block}{Some conclusions: a simple (and meaningful) requirement led to:}
+\begin{itemize}
+\item Mathematical calculations (still feasible)
+\item Multivariate optimization (with some numerical tinkering)
+\end{itemize}
+\end{block}
+\end{frame}
+% Emacs 25.1.1 (Org mode 8.2.10)
 \end{document}
