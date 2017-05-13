@@ -9,10 +9,12 @@
 #+COLUMNS: %45ITEM %10BEAMER_ENV(Env) %10BEAMER_ACT(Act) %4BEAMER_COL(Col) %8BEAMER_OPT(Opt)
 * Outline
 ** Outline
-*** Numerical derivatives
-*** Matrix decomposition
-*** Pseudorandom number generators
-*** Generation of correlated random numbers
+- Numerical derivatives
+- Matrix decomposition
+- Pseudorandom number generators
+- Generation of correlated random numbers
+- Computation of quantile functions
+- Constrained distributions
 * Basic numerics
 ** Numerical derivative - I
 *** 2 point symmetric derivative
@@ -36,17 +38,8 @@ print(num.deriv(sqrt, 4, .01))
 ** Numerical derivative - III
 *** 5 point derivative
 If 2-point derivative behaves badly, try more precision
+
 $f'_{num} = \frac{-f(x+2h) + 8f(x+h) - 8f(x-h) + f(x-2h)}{12h}$
-** Semidefinite matrix decomposition and eigenvalues
-*** Example
-Assume that the default rates in different industries are correlated. The corresponding correlation matrix is positive semidefinite.
-*** In order to draw the correlated random variables we need to decompose the correlation matrix
-*** Possibilities
-**** Cholesky decomposition
-$\Sigma = LL^T$ where L is low-triangular
-**** Eigendecomposition
-$\Sigma = (Q\Lambda^{\frac{1}{2}})(Q\Lambda^{\frac{1}{2}})^T$ where $\Lambda$ is matrix with eigenvalues on diagonal and 0 elsewhere, Q is matrix of eigenvectors
-* Numerics in Stochastics
 ** Pseudo-Random Numbers Generators (PRNG) - I
 *** Importance of reproducibility of results
 **** Sounds like a paradox: random numbers must be reproducible
@@ -71,6 +64,18 @@ print(loss.dist(seed=1, N=4))
 print(loss.dist(seed=1, N=4))  # same seed - same sequence
 print(loss.dist(seed=10, N=4)) # different seed - different sequency
 #+end_src
+
+** Semidefinite matrix decomposition and eigenvalues
+*** Example
+Assume that the default rates in different industries are correlated. The corresponding correlation matrix is positive semidefinite.
+*** Reason? 
+- In order to draw the correlated random variables we need to decompose the correlation matrix
+*** Possibilities
+**** Cholesky decomposition
+$\Sigma = LL^T$ where L is low-triangular
+**** Eigendecomposition
+$\Sigma = (Q\Lambda^{\frac{1}{2}})(Q\Lambda^{\frac{1}{2}})^T$ where $\Lambda$ is matrix with eigenvalues on diagonal and 0 elsewhere, Q is matrix of eigenvectors
+* Numerics in Stochastics
 ** Correlated numbers generation
 *** Practical scenario:
 There's a correlation matrix given. However, an expert sets some of the negative correlations to 0 (reality check).
@@ -104,7 +109,7 @@ print(cor(t(mx%*%V)))
 - Normal distribution (not even cdf is given in elementary functions!)
 - Gamma distribution
 *** Quantile function given
-If the quantile function is given, it's better to used its Taylor expansion
+If the quantile function is given, it's better to use its Taylor expansion
 *** Example
 Normal cdf is implemented in practice as a piecewise Taylor polynom, i.e. with coefficients varying on different intervals.
 ** Computation of quantile functions - II
@@ -151,7 +156,7 @@ uniroot(pg, c(0,0.22))$root
 - where $\eta = \sigma \frac{\phi(-\frac{\mu}{\sigma})}{1 - \Phi(-\frac{\mu}{\sigma})}$
 - However, no straight-forward way to invert (and we have a system of two equations - one for mean and one for deviation)
 ** Case - Constrained distribution
-*** Numerical inversion of a sysdtem of equations
+*** Numerical inversion of a system of equations
 - One of possible options is to minimize the sum of error squares
 - $(\hat{\mu}(\mu,\sigma) - \mu_0)^2 + (\hat{\sigma}(\mu,\sigma) - \sigma_0)^2 \rightarrow \min_{\mu,\sigma}$
 - require a multi-dimensional optimization (e.g. gradient descent)
@@ -159,3 +164,5 @@ uniroot(pg, c(0,0.22))$root
 *** Some conclusions: a simple (and meaningful) requirement led to:
 - Mathematical calculations (still feasible)
 - Multivariate optimization (with some numerical tinkering)
+*** Homework if desired
+- How the equations would change if the collateral can be at most its notional (i.e. right-bound) 

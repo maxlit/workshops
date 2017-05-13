@@ -1,4 +1,4 @@
-% Created 2017-05-04 Thu 15:21
+% Created 2017-05-13 Sat 16:32
 \documentclass[presentation]{beamer}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -34,14 +34,14 @@
 \section{Outline}
 \label{sec-1}
 \begin{frame}[label=sec-1-1]{Outline}
-\begin{block}{Numerical derivatives}
-\end{block}
-\begin{block}{Matrix decomposition}
-\end{block}
-\begin{block}{Pseudorandom number generators}
-\end{block}
-\begin{block}{Generation of correlated random numbers}
-\end{block}
+\begin{itemize}
+\item Numerical derivatives
+\item Matrix decomposition
+\item Pseudorandom number generators
+\item Generation of correlated random numbers
+\item Computation of quantile functions
+\item Constrained distributions
+\end{itemize}
 \end{frame}
 \section{Basic numerics}
 \label{sec-2}
@@ -78,27 +78,11 @@ print(num.deriv(sqrt, 4, .01))
 \begin{frame}[label=sec-2-3]{Numerical derivative - III}
 \begin{block}{5 point derivative}
 If 2-point derivative behaves badly, try more precision
+
 $f'_{num} = \frac{-f(x+2h) + 8f(x+h) - 8f(x-h) + f(x-2h)}{12h}$
 \end{block}
 \end{frame}
-\begin{frame}[label=sec-2-4]{Semidefinite matrix decomposition and eigenvalues}
-\begin{block}{Example}
-Assume that the default rates in different industries are correlated. The corresponding correlation matrix is positive semidefinite.
-\end{block}
-\begin{block}{In order to draw the correlated random variables we need to decompose the correlation matrix}
-\end{block}
-\begin{block}{Possibilities}
-\begin{block}{Cholesky decomposition}
-$\Sigma = LL^T$ where L is low-triangular
-\end{block}
-\begin{block}{Eigendecomposition}
-$\Sigma = (Q\Lambda^{\frac{1}{2}})(Q\Lambda^{\frac{1}{2}})^T$ where $\Lambda$ is matrix with eigenvalues on diagonal and 0 elsewhere, Q is matrix of eigenvectors
-\end{block}
-\end{block}
-\end{frame}
-\section{Numerics in Stochastics}
-\label{sec-3}
-\begin{frame}[label=sec-3-1]{Pseudo-Random Numbers Generators (PRNG) - I}
+\begin{frame}[label=sec-2-4]{Pseudo-Random Numbers Generators (PRNG) - I}
 \begin{block}{Importance of reproducibility of results}
 \begin{block}{Sounds like a paradox: random numbers must be reproducible}
 Helps to spot the effects of other factors, e.g. you need to calculate impact of the new pricing algorithm and eliminate effect of randomness.
@@ -114,7 +98,7 @@ Helps to spot the effects of other factors, e.g. you need to calculate impact of
 \end{itemize}
 \end{block}
 \end{frame}
-\begin{frame}[fragile,label=sec-3-2]{Pseudo-Random Numbers Generators (PRNG) - II}
+\begin{frame}[fragile,label=sec-2-5]{Pseudo-Random Numbers Generators (PRNG) - II}
  \begin{block}{Code example}
 \begin{verbatim}
 loss.dist <- function(seed, N)
@@ -136,7 +120,27 @@ print(loss.dist(seed=10, N=4)) # different seed - different sequency
 \end{block}
 \end{frame}
 
-\begin{frame}[fragile,label=sec-3-3]{Correlated numbers generation}
+\begin{frame}[label=sec-2-6]{Semidefinite matrix decomposition and eigenvalues}
+\begin{block}{Example}
+Assume that the default rates in different industries are correlated. The corresponding correlation matrix is positive semidefinite.
+\end{block}
+\begin{block}{Reason?}
+\begin{itemize}
+\item In order to draw the correlated random variables we need to decompose the correlation matrix
+\end{itemize}
+\end{block}
+\begin{block}{Possibilities}
+\begin{block}{Cholesky decomposition}
+$\Sigma = LL^T$ where L is low-triangular
+\end{block}
+\begin{block}{Eigendecomposition}
+$\Sigma = (Q\Lambda^{\frac{1}{2}})(Q\Lambda^{\frac{1}{2}})^T$ where $\Lambda$ is matrix with eigenvalues on diagonal and 0 elsewhere, Q is matrix of eigenvectors
+\end{block}
+\end{block}
+\end{frame}
+\section{Numerics in Stochastics}
+\label{sec-3}
+\begin{frame}[fragile,label=sec-3-1]{Correlated numbers generation}
  \begin{block}{Practical scenario:}
 There's a correlation matrix given. However, an expert sets some of the negative correlations to 0 (reality check).
 We need to know if the adjusted matrix is still positive semidefinite.
@@ -152,13 +156,13 @@ print(min(eigen(R)$value))
 
 \begin{verbatim}
           [,1]      [,2]
-[1,] 1.0000000 0.5076308
-[2,] 0.5076308 1.0000000
+[1,] 1.0000000 0.4792674
+[2,] 0.4792674 1.0000000
 \end{verbatim}
 \end{block}
 \end{frame}
 
-\begin{frame}[fragile,label=sec-3-4]{Correlated numbers generation - II}
+\begin{frame}[fragile,label=sec-3-2]{Correlated numbers generation - II}
  \begin{block}{Refresher: fact from the probability theory}
 Let $\xi \in \Phi_{0_n, I_n}$ and $\Sigma = AA^T$
 Then $A\xi \in \Phi_{0_n, \Sigma}$
@@ -173,7 +177,7 @@ print(cor(t(mx%*%V)))
 \end{verbatim}
 \end{block}
 \end{frame}
-\begin{frame}[label=sec-3-5]{Computation of quantile functions - I}
+\begin{frame}[label=sec-3-3]{Computation of quantile functions - I}
 \begin{block}{Given}
 \begin{itemize}
 \item Given: F() - cdf, probability \emph{y}
@@ -187,13 +191,13 @@ print(cor(t(mx%*%V)))
 \end{itemize}
 \end{block}
 \begin{block}{Quantile function given}
-If the quantile function is given, it's better to used its Taylor expansion
+If the quantile function is given, it's better to use its Taylor expansion
 \end{block}
 \begin{block}{Example}
 Normal cdf is implemented in practice as a piecewise Taylor polynom, i.e. with coefficients varying on different intervals.
 \end{block}
 \end{frame}
-\begin{frame}[label=sec-3-6]{Computation of quantile functions - II}
+\begin{frame}[label=sec-3-4]{Computation of quantile functions - II}
 \begin{block}{Problem}
 Many algorithms require an interval to be defined, however, the quantile function are often defined on unconstrained intervals.
 \end{block}
@@ -205,7 +209,7 @@ Many algorithms require an interval to be defined, however, the quantile functio
 \end{itemize}
 \end{block}
 \end{frame}
-\begin{frame}[label=sec-3-7]{Computation of quantile functions - III}
+\begin{frame}[label=sec-3-5]{Computation of quantile functions - III}
 \begin{block}{Application}
 \begin{block}{Inequality}
 $P(|X - \mu| \geq 10\sigma) = 0.01$
@@ -222,7 +226,7 @@ $P(|X - \mu| \geq 10\sigma) = 0.01$
 $P(|X - \mu| \geq 10\sigma) = 0.01$
 \end{block}
 \end{frame}
-\begin{frame}[fragile,label=sec-3-8]{Computation of quantile functions - IV}
+\begin{frame}[fragile,label=sec-3-6]{Computation of quantile functions - IV}
  \begin{block}{Problem}
 Find quantile of Gamma distribution using uniroot procedure
 \end{block}
@@ -267,7 +271,7 @@ uniroot(pg, c(0,0.22))$root
 \end{block}
 \end{frame}
 \begin{frame}[label=sec-4-3]{Case - Constrained distribution}
-\begin{block}{Numerical inversion of a sysdtem of equations}
+\begin{block}{Numerical inversion of a system of equations}
 \begin{itemize}
 \item One of possible options is to minimize the sum of error squares
 \item $(\hat{\mu}(\mu,\sigma) - \mu_0)^2 + (\hat{\sigma}(\mu,\sigma) - \sigma_0)^2 \rightarrow \min_{\mu,\sigma}$
@@ -280,6 +284,11 @@ uniroot(pg, c(0,0.22))$root
 \begin{itemize}
 \item Mathematical calculations (still feasible)
 \item Multivariate optimization (with some numerical tinkering)
+\end{itemize}
+\end{block}
+\begin{block}{Homework if desired}
+\begin{itemize}
+\item How the equations would change if the collateral can be at most its notional (i.e. right-bound)
 \end{itemize}
 \end{block}
 \end{frame}
